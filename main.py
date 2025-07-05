@@ -2,6 +2,7 @@ from fastapi import FastAPI, Query, Path
 from enum import Enum
 from schema.item import Item
 from typing import Annotated
+from schema.FilterParams import FilterParams
 
 app = FastAPI()
 
@@ -158,3 +159,11 @@ async def read_items(
 # lt: less than
 # le: less than or equal
 
+
+############# QUERY PARAMETERS WITH A PYDENTIC MODEL
+
+
+@app.get("/filter/")
+async def read_items(filter: Annotated[FilterParams, Query()]):
+    # print(fil)
+    return filter
