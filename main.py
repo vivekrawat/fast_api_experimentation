@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from enum import Enum
 from schema.item import Item
+from typing import Annotated
 
 app = FastAPI()
 
@@ -78,4 +79,53 @@ async def create_item(item: Item):
 # below is an example of a body with query parameters and path parameters . Fast api is able to automatically recognize them
 # @app.put("/items/{item_id}")
 # async def update_item(item_id: int, item: Item, q: str | None = None):
+
+
+# adding extra vlaidations to the query
+
+@app.get("/item1/")
+async def det_items(desc: Annotated[str|None, Query(max_length=20)]=None):
+    if desc:
+        return desc
+    else:
+        return "some text"
+
+# q: str | None = None 3.10+
+# q: Union[str, None] = None 3.8+
+
+# q: Annotated[str | None] = None 3.10+
+# q: Annotated[Union[str, None]] = None 3.8+
+
+# async def read_items(q: str | None = Query(default=None, max_length=50)):  this is the old code without using annotated
+
+# other attributes like max length
+# min_length
+# pattern="^fixedquery$
+# regex="^fixedquery$
+# regex is depricated and was used in previous versions now pattern is used
+
+
+# async def read_items(q: Annotated[str, Query(min_length=3)] = "fixedquery"): default values
+
+# in the following example the value is require but it can be none
+# async def read_items(q: Annotated[str | None, Query(min_length=3)]):
+
+#query parameter with list with multiple values
+@app.get("/items3/")
+async def get_items(q: Annotated[list[str]|None , Query(
+    alias="item-query",
+      title="Query string",
+      description="Query string for the items to search in the database that have a good match ha ha ah a",#this stuff is displayed in the openapi docs
+      min_length=3,
+      max_length=50,
+      pattern="^fixedquery$",
+      deprecated=True,
+)]):
+    if q:
+        return q
+    else :
+        return "some value"
+# items3/?q=yaara&q=ff&q=string this is how the url will look
+
+
 
