@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from enum import Enum
+from schema.item import Item
 
 app = FastAPI()
 
@@ -62,3 +63,19 @@ async def  read_item(q: bool = False):
         return "the query parameter was true" # will run on q=1,yes,true, True
     else:
         return "query paramet was false" # q=0,no,false,False
+    
+
+@app.post("/item")
+async def create_item(item: Item):
+    # initialy the item has a type of Item
+    items_dict = item.dict()# converting it to dict so it is serializable
+
+    if item.tax is None:
+        items_dict["tax"] = 12.43
+    return items_dict
+    # return item this return can also serialize it automatically
+
+# below is an example of a body with query parameters and path parameters . Fast api is able to automatically recognize them
+# @app.put("/items/{item_id}")
+# async def update_item(item_id: int, item: Item, q: str | None = None):
+
