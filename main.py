@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Path
 from enum import Enum
 from schema.item import Item
 from typing import Annotated
@@ -128,4 +128,33 @@ async def get_items(q: Annotated[list[str]|None , Query(
 # items3/?q=yaara&q=ff&q=string this is how the url will look
 
 
+
+@app.get("/items4/{item_id}")
+async def read_items(
+    item_id: Annotated[int, Path(title="The ID of the item to get")],
+    q: Annotated[str | None, Query(alias="item-query")] = None,
+):
+    results = {"item_id": item_id}
+    if q:
+        results.update({"q": q})
+    return results
+
+
+# example od path parameter using annotated
+# async def read_items(
+#     q: str, item_id: Annotated[int, Path(title="The ID of the item to get")]
+# ):
+
+# greater than and less than can also for the float values
+# async def read_items(
+#     *,
+#     item_id: Annotated[int, Path(title="The ID of the item to get", ge=0, le=1000)],
+#     q: str,
+#     size: Annotated[float, Query(gt=0, lt=10.5)],
+# ):
+# gt: greater th
+# an
+# ge: greater than or equal
+# lt: less than
+# le: less than or equal
 
